@@ -1,6 +1,6 @@
 <?php
 
-$graph = array(
+$adjacencyList = array(
     'A' => array('B', 'F'),
     'B' => array('A', 'D', 'E'),
     'C' => array('F'),
@@ -9,7 +9,7 @@ $graph = array(
     'F' => array('A', 'C', 'E')
 );
 
-$g = new Graph($graph);
+$g = new Graph($adjacencyList);
 
 // least number of hops between D and C
 $g->breadthFirstSearch('D', 'C');
@@ -18,36 +18,36 @@ $g->breadthFirstSearch('D', 'C');
 // D->E->F->C
 
 // least number of hops between B and F
-$g->breadthFirstSearch('B', 'F');
+// $g->breadthFirstSearch('B', 'F');
 // outputs:
 // B to F in 2 hops
 // B->A->F
 
 // least number of hops between A and C
-$g->breadthFirstSearch('A', 'C');
+// $g->breadthFirstSearch('A', 'C');
 // outputs:
 // A to C in 2 hops
 // A->F->C
 
 // least number of hops between A and G
-$g->breadthFirstSearch('A', 'G');
+// $g->breadthFirstSearch('A', 'G');
 // outputs:
 // No route from A to G
 
 class Graph
 {
-  protected $graph;
+  protected $adjacencyList;
   protected $visited = array();
 
-  public function __construct($graph) {
-    $this->graph = $graph;
+  public function __construct($adjacencyList) {
+    $this->adjList = $adjacencyList;
   }
 
   // find least number of hops (edges) between 2 nodes
   // (vertices)
   public function breadthFirstSearch($origin, $destination) {
     // mark all nodes as unvisited
-    foreach ($this->graph as $vertex => $adj) {
+    foreach ($this->adjList as $vertex => $adjArray) {
       $this->visited[$vertex] = false;
     }
 
@@ -70,22 +70,32 @@ class Graph
     $found = false;
     // while queue is not empty and destination not found
     while (!$q->isEmpty() && $q->bottom() != $destination) {
-      $t = $q->dequeue();
+      $currentVertex = $q->dequeue();
 
-      if (!empty($this->graph[$t])) {
+      if (!empty($this->adjList[$currentVertex])) {
+
         // for each adjacent neighbor
-        foreach ($this->graph[$t] as $vertex) {
-          if (!$this->visited[$vertex]) {
+        foreach ($this->adjList[$currentVertex] as $neighbor) {
+
+          if (!$this->visited[$neighbor]) {
             // if not yet visited, enqueue vertex and mark
             // as visited
-            $q->enqueue($vertex);
-            $this->visited[$vertex] = true;
+            $q->enqueue($neighbor);
+           
+            $this->visited[$neighbor] = true;
+
             // add vertex to current path
-            $path[$vertex] = clone $path[$t];
-            $path[$vertex]->push($vertex);
+            $path[$neighbor] = clone $path[$currentVertex];
+            echo "<br><br>";
+            var_dump($path);
+            $path[$neighbor]->push($neighbor);
+
           }
+
         }
+
       }
+
     }
 
     if (isset($path[$destination])) {
