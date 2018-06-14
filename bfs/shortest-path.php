@@ -1,11 +1,5 @@
 <?php
 
-/**
- * need to create graph with adjacency 
- * please visit pluralsight at: 
- * https://app.pluralsight.com/player?course=graph-algorithms-python&author=janani-ravi&name=68e2661d-1376-4a5d-a51e-bc93d4942ee9&clip=4&mode=live
- */
-
 function build_distance_table($graph, $source){
 
     $distance_table = [];
