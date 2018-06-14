@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * need to create graph with adjacency 
+ * please visit pluralsight at: 
+ * https://app.pluralsight.com/player?course=graph-algorithms-python&author=janani-ravi&name=68e2661d-1376-4a5d-a51e-bc93d4942ee9&clip=4&mode=live
+ */
+
 function build_distance_table($graph, $source){
 
     $distance_table = [];
@@ -23,7 +29,7 @@ function build_distance_table($graph, $source){
                 $distance_table[$neighbor] = [1 + $current_distance, $current_vertex];
             
                 if(count(get_adjacent_vertices($graph[$neighbor])) > 0){
-                    $queue.push($neighbor)
+                    array_push($queue, $neighbor);
                 }
             }
         }
@@ -39,21 +45,15 @@ function shortest_path($graph, $source, $destination){
 
     $previous_vertex = $distance_table[$destination][1];
 
-    while($previous_vertex !== null && $previous_vertex !== $source){
+    while(is_null($previous_vertex) && $previous_vertex !== $source){
         $path = $previous_vertex + $path;
-        $previous_vertex = $distance_table[$previous_vertex][1]
+        $previous_vertex = $distance_table[$previous_vertex][1];
     }
 
-    if($previous_vertex is null){
+    if(is_null($previous_vertex)){
         print "There is no path from $source to $destination";
     }else{
         $path = [$source] + $path;
         print "shortest path is $path";
     }
 }
-
-/**
- * need to create graph with adjacency 
- * please visit pluralsight at: 
- * https://app.pluralsight.com/player?course=graph-algorithms-python&author=janani-ravi&name=68e2661d-1376-4a5d-a51e-bc93d4942ee9&clip=4&mode=live
- */
