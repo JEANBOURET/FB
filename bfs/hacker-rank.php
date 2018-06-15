@@ -43,13 +43,13 @@ function breadthFirstSearch($origin, $destination, $edges){
         }
 
     var_dump($path);
-        if(isset($path[$destination])) {
-            $weight = 0;
-            foreach($path[$destination] as $node){
-                $weight += 6; 
-            }
-            return $weight;
-        }else{
-            return -1;
+    if(isset($path[$destination])) {
+        $weight = 0;
+        foreach($path[$destination] as $node){
+            $weight += 6; 
         }
+        return $weight;
+    }else{
+        return -1;
     }
+}
