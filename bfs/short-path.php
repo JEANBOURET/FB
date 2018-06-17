@@ -1,6 +1,6 @@
 <?php
 
-$adjacencyList = array(
+$graph = array(
     'A' => array('B', 'F'),
     'B' => array('A', 'D', 'E'),
     'C' => array('F'),
@@ -9,7 +9,7 @@ $adjacencyList = array(
     'F' => array('A', 'C', 'E')
 );
 
-$g = new Graph($adjacencyList);
+$g = new Graph($graph);
 
 // least number of hops between D and C
 $g->breadthFirstSearch('D', 'C');
@@ -36,18 +36,18 @@ $g->breadthFirstSearch('D', 'C');
 
 class Graph
 {
-  protected $adjacencyList;
+  protected $graph;
   protected $visited = array();
 
-  public function __construct($adjacencyList) {
-    $this->adjList = $adjacencyList;
+  public function __construct($graph) {
+    $this->graph = $graph;
   }
 
   // find least number of hops (edges) between 2 nodes
   // (vertices)
   public function breadthFirstSearch($origin, $destination) {
     // mark all nodes as unvisited
-    foreach ($this->adjList as $vertex => $adjArray) {
+    foreach ($this->graph as $vertex => $adjArray) {
       $this->visited[$vertex] = false;
     }
 
@@ -61,34 +61,43 @@ class Graph
     // this is used to track the path back from each node
     $path = array();
     $path[$origin] = new SplDoublyLinkedList();
+    var_dump($path);
     $path[$origin]->setIteratorMode(
       SplDoublyLinkedList::IT_MODE_FIFO|SplDoublyLinkedList::IT_MODE_KEEP
     );
 
     $path[$origin]->push($origin);
+    var_dump($path);
 
     $found = false;
     // while queue is not empty and destination not found
     while (!$q->isEmpty() && $q->bottom() != $destination) {
       $currentVertex = $q->dequeue();
 
-      if (!empty($this->adjList[$currentVertex])) {
+      if (!empty($this->graph[$currentVertex])) {
 
         // for each adjacent neighbor
-        foreach ($this->adjList[$currentVertex] as $neighbor) {
+        foreach ($this->graph[$currentVertex] as $neighbor) {
 
           if (!$this->visited[$neighbor]) {
-            // if not yet visited, enqueue vertex and mark
-            // as visited
+            // if not yet visited, enqueue vertex and mark as visited
             $q->enqueue($neighbor);
+            echo "<br>cola:";
+            var_dump($q);
            
             $this->visited[$neighbor] = true;
 
             // add vertex to current path
             $path[$neighbor] = clone $path[$currentVertex];
-            echo "<br><br>";
-            var_dump($path);
+            
+            
+            // echo "<br><br>";
+            // var_dump($path);
             $path[$neighbor]->push($neighbor);
+            echo "<br>path:";
+            var_dump($path);
+            // break;
+            // exit();
 
           }
 
@@ -107,7 +116,6 @@ class Graph
         echo $sep, $vertex;
         $sep = '->';
       }
-      echo "n";
     }
     else {
       echo "<br>No route from $origin to $destination";

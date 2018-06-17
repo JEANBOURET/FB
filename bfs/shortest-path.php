@@ -1,53 +1,78 @@
 <?php
 
-function build_distance_table($graph, $source){
+// $g = new Graph($graph);
 
-    $distance_table = [];
+breadthFirstSearch('D', 'C');
 
-    foreach($graph['vertices'] as $vertice){
-        $distance_table[$vertice] = [null, null];
-    }
+// class Graph{
+//     protected $graph;
+//     protected $visited = [];
 
-    $distance_table[$source] = [0, $source];
+//     public function __construct($graph){
+//         $graph = $graph;
+//     }
 
-    $queue = [];
-    array_push($queue, $source);
+    function breadthFirstSearch($origin, $destination){
 
-    while(count($queue)){
-        $current_vertex = array_shift($queue);
+        $graph = [
+            'A' => ['B', 'F'],
+            'B' => ['A', 'D', 'E'],
+            'C' => ['F'],
+            'D' => ['B', 'E'],
+            'E' => ['B', 'D', 'F'],
+            'F' => ['A', 'C', 'E'],
+        ];
+        
+        //set all visited nodes to false
+        foreach($graph as $vertex => $adjArray){
+            $visited[$vertex] = false;
+        }
 
-        $current_distance = $distance_table[$current_vertext][0];
+        //create a queue and push origin into it
+        $q = new SplQueue();
+        $q->enqueue($origin);
 
-        foreach(get_adjacent_vertices($graph[$current_vertex]) as $neighbor){
-            if(is_null($distance_table[$neighbor][0])){
-                $distance_table[$neighbor] = [1 + $current_distance, $current_vertex];
+        //set origin as visited in visited list
+        $visited[$origin] = true;
+
+        //this path is an array that will contain a vertex as a key and its value will be a dobly linked list
+        $path = [];
+        $path[$origin] = new SplDoublyLinkedList();
+        $path[$origin]->setIteratorMode(
+            SplDoublyLinkedList::IT_MODE_FIFO|SplDoublyLinkedList::IT_MODE_KEEP
+        );
+        $path[$origin]->push($origin);
+
+        while(!$q->isEmpty() && $q->bottom() != $destination){
             
-                if(count(get_adjacent_vertices($graph[$neighbor])) > 0){
-                    array_push($queue, $neighbor);
+            $currentVertex = $q->dequeue();
+
+            if(!empty($graph[$currentVertex])){
+                foreach($graph[$currentVertex] as $neighbor){
+                    if(!$visited[$neighbor]){
+                        // add neighbor to queue
+                        $q->enqueue($neighbor);
+
+                        //set neighbor as visited
+                        $visited[$neighbor] = true;
+
+                        //clone current previous node into neighbor key and push neighbor into adjacency list
+                        $path[$neighbor] = clone $path[$currentVertex];
+                        $path[$neighbor]->push($neighbor);
+                    }
                 }
             }
         }
+
+        if(isset($path[$destination])) {
+            echo "<br>path from $origin to $destination is:<br>";
+            $sep = '';
+            foreach($path[$destination] as $node){
+                echo "$sep$node";
+                $sep = '->';
+            }
+        }else{
+            echo "<br>There's no route from $origin to $destination";
+        }
     }
-
-    return $distance_table;
-}
-
-function shortest_path($graph, $source, $destination){
-    $distance_table = build_distance_table($graph, $source);
-
-    $path = [$destination];
-
-    $previous_vertex = $distance_table[$destination][1];
-
-    while(is_null($previous_vertex) && $previous_vertex !== $source){
-        $path = $previous_vertex + $path;
-        $previous_vertex = $distance_table[$previous_vertex][1];
-    }
-
-    if(is_null($previous_vertex)){
-        print "There is no path from $source to $destination";
-    }else{
-        $path = [$source] + $path;
-        print "shortest path is $path";
-    }
-}
+// }
