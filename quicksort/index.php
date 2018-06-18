@@ -3,7 +3,8 @@
 $array = [12, 11, 13, 5, 6, 7, 8];
 
 print "sorted array<br>";
-var_dump(quickSort($array, 0, count($array)-1));
+quickSort($array, 0, count($array)-1);
+var_dump($array);
 
 function quickSort(&$array, $left, $right){
 
@@ -21,7 +22,7 @@ function quickSort(&$array, $left, $right){
         }
 
         while($array[$r] > $pivot){
-            $r++;
+            $r--;
         }
 
         if($l<=$r){
